@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>السعودي يقول</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: #052619;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at center, #0a3a26 0%, #03180f 100%);
+        }
+
+        header {
+            width: 100%;
+            background: rgba(3, 24, 15, 0.95);
+            border-bottom: 2px solid #d4af37;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .royal-banner {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #062e1d;
+            border: 2px solid #d4af37;
+            padding: 10px 20px;
+            border-radius: 15px;
+        }
+
+        .royal-images {
+            display: flex;
+            gap: 10px;
+        }
+
+        .royal-figure {
+            text-align: center;
+        }
+
+        .royal-figure img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid #d4af37;
+            object-fit: cover;
+        }
+
+        .royal-figure span {
+            font-size: 10px;
+            color: #d4af37;
+            display: block;
+            margin-top: 2px;
+            font-weight: bold;
+        }
+
+        .royal-text h2 {
+            color: #d4af37;
+            font-size: 18px;
+            font-weight: 900;
+        }
+
+        .royal-text p {
+            color: #e2e8f0;
+            font-size: 12px;
+        }
+
+        .national-quotes {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: #d4af37;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            flex-wrap: wrap;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .setup-screen, .game-screen {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .card {
+            background: rgba(6, 46, 29, 0.9);
+            border: 3px solid #d4af37;
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .card h1 {
+            color: #d4af37;
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-weight: 900;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #d4af37;
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background: #03180f;
+            border: 2px solid #d4af37;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #d4af37, #aa8c2c);
+            color: #03180f;
+            border: none;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: 900;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: scale(1.02);
+            background: linear-gradient(135deg, #e6c555, #d4af37);
+        }
+
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+
+        .team-box {
+            flex: 1;
+            background: rgba(6, 46, 29, 0.8);
+            border: 2px solid #2e7d32;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .team-box.active {
+            border-color: #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            background: rgba(10, 70, 43, 0.9);
+            transform: scale(1.03);
+        }
+
+        .team-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #d4af37;
+            margin-bottom: 5px;
+        }
+
+        .team-score {
+            font-size: 32px;
+            font-weight: 900;
+            color: #ffffff;
+        }
+
+        .strikes {
+            color: #ff5252;
+            font-size: 20px;
+            margin-top: 5px;
+            letter-spacing: 5px;
+        }
+
+        .question-box {
+            background: #0c4a2e;
+            border: 3px solid #d4af37;
+            border-radius: 20px;
+            padding: 25px;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        }
+
+        .question-text {
+            font-size: 28px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        }
+
+        .answers-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+
+        .answer-card {
+            background: linear-gradient(135deg, #1b5e20, #0f3d14);
+            border: 2px solid #2e7d32;
+            border-radius: 12px;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .answer-card:hover {
+            border-color: #d4af37;
+        }
+
+        .answer-card.revealed {
+            background: linear-gradient(135deg, #0d5c36, #063820);
+            border-color: #d4af37;
+        }
+
+        .answer-num-letter {
+            font-size: 22px;
+            font-weight: bold;
+            color: #d4af37;
+        }
+
+        .answer-text {
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            visibility: hidden;
+            text-align: left;
+        }
+
+        .answer-card.revealed .answer-text {
+            visibility: visible;
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .ctrl-btn {
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+        }
+
+        .btn-wrong {
+            background-color: #c62828;
+            color: white;
+        }
+        .btn-wrong:hover { background-color: #b71c1c; }
+
+        .btn-reveal-all {
+            background-color: #2e7d32;
+            color: white;
+        }
+        .btn-reveal-all:hover { background-color: #1b5e20; }
+
+        .btn-next {
+            background-color: #d4af37;
+            color: #03180f;
+        }
+        .btn-next:hover { background-color: #c19b2e; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="royal-banner">
+            <div class="royal-images">
+                <div class="royal-figure">
+                    <img src="image_818c69.jpg" alt="الملك سلمان">
+                    <span>خادم الحرمين الشريفين</span>
+                </div>
+                <div class="royal-figure">
+                    <img src="image_818c69.jpg" alt="الأمير محمد بن سلمان" style="object-position: right;">
+                    <span>ولي العهد</span>
+                </div>
+            </div>
+            <div class="royal-text">
+                <h2>حفظهم الله</h2>
+                <p>عز وفخر</p>
+            </div>
+        </div>
+        <div class="national-quotes">
+            <span>🇸🇦 السعودية ديرتي مامثلك بها الكون ديره</span>
+            <span>🇸🇦 السعودية لاتقع</span>
+            <span>🇸🇦 عزنا بطبعنا</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- شاشة الإعدادات -->
+        <div id="setupScreen" class="setup-screen">
+            <div class="card">
+                <h1>السعودي يقول 🇸🇦</h1>
+                <div class="form-group">
+                    <label>اسم الفريق الأول:</label>
+                    <input type="text" id="team1Input" class="form-control" value="">
+                </div>
+                <div class="form-group">
+                    <label>اسم الفريق الثاني:</label>
+                    <input type="text" id="team2Input" class="form-control" value="">
+                </div>
+                <div class="form-group">
+                    <label>عدد الخيارات لكل سؤال (من 3 إلى 5):</label>
+                    <input type="number" id="optionsCountInput" class="form-control" min="3" max="5" value="5">
+                </div>
+                <button class="btn" onclick="startGame()">ابدأ التحدي</button>
+            </div>
+        </div>
+
+        <!-- شاشة اللعبة -->
+        <div id="gameScreen" class="game-screen hidden">
+            <div class="scoreboard">
+                <div id="team1Box" class="team-box active">
+                    <div id="team1Display" class="team-name">فريق الصقور</div>
+                    <div id="team1Score" class="team-score">0</div>
+                    <div id="team1Strikes" class="strikes"></div>
+                </div>
+                <div id="team2Box" class="team-box">
+                    <div id="team2Display" class="team-name">فريق النسور</div>
+                    <div id="team2Score" class="team-score">0</div>
+                    <div id="team2Strikes" class="strikes"></div>
+                </div>
+            </div>
+
+            <div class="question-box">
+                <div id="questionText" class="question-text">السؤال هنا...</div>
+            </div>
+
+            <div id="answersGrid" class="answers-grid">
+                <!-- الإجابات تتولد ديناميكياً -->
+            </div>
+
+            <div class="game-controls">
+                <button class="ctrl-btn btn-wrong" onclick="registerWrong()">❌ تسجيل خطأ (ستريك)</button>
+                <button class="ctrl-btn btn-reveal-all" onclick="revealAll()">👁️ كشف الكل وعرض الإجابات</button>
+                <button class="ctrl-btn btn-next" onclick="nextQuestion()">السؤال التالي ➡️</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questionsDB = [
+            {
+                q: "دخلت المجلس وش ممكن لقيت؟",
+                answers: [
+                    { letter: "م", text: "مدخنة" },
+                    { letter: "ك", text: "كنب" },
+                    { letter: "ف", text: "فرشة" },
+                    { letter: "د", text: "دلة" },
+                    { letter: "ب", text: "براد" }
+                ]
+            },
+            {
+                q: "شي يطلبه الضيف أول ما يدخل البيت؟",
+                answers: [
+                    { letter: "ق", text: "قهوة" },
+                    { letter: "م", text: "ماء" },
+                    { letter: "ب", text: "بخور" },
+                    { letter: "ت", text: "ترحيب" },
+                    { letter: "ك", text: "كرسي" }
+                ]
+            },
+            {
+                q: "أكلة شعبية سعودية لا يمكن الاستغناء عنها في العيد؟",
+                answers: [
+                    { letter: "م", text: "مفطح" },
+                    { letter: "ج", text: "جريش" },
+                    { letter: "س", text: "سليق" },
+                    { letter: "ق", text: "قرصان" },
+                    { letter: "ح", text: "حنيني" }
+                ]
+            },
+            {
+                q: "شي تلقاه في ثلاجة كل بيت سعودي؟",
+                answers: [
+                    { letter: "ل", text: "لبن" },
+                    { letter: "ت", text: "تمر" },
+                    { letter: "ب", text: "ببسي" },
+                    { letter: "ط", text: "طماطم" },
+                    { letter: "ج", text: "جبن" }
+                ]
+            },
+            {
+                q: "شي تحطه السيارة أول ما تعبي بنزين؟",
+                answers: [
+                    { letter: "م", text: "محفظة" },
+                    { letter: "س", text: "ستيكر" },
+                    { letter: "ع", text: "عطور" },
+                    { letter: "م", text: "مناديل" },
+                    { letter: "ر", text: "رقم الحساب" }
+                ]
+            },
+            {
+                q: "شي تطلبه من البقالة وغالباً ينسونه أهلك؟",
+                answers: [
+                    { letter: "خ", text: "خبز" },
+                    { letter: "ز", text: "زبادي" },
+                    { letter: "ح", text: "حليب" },
+                    { letter: "ب", text: "بيض" },
+                    { letter: "ش", text: "شامبو" }
+                ]
+            },
+            {
+                q: "مشروب سعودي ساخن أساسي في الشتاء؟",
+                answers: [
+                    { letter: "ز", text: "زنجبيل" },
+                    { letter: "ق", text: "قشر" },
+                    { letter: "ح", text: "حليب مغلي" },
+                    { letter: "س", text: "سحلب" },
+                    { letter: "ش", text: "شاي عدني" }
+                ]
+            },
+            {
+                q: "مكان تروح له العائلة السعودية في الويكند؟",
+                answers: [
+                    { letter: "ب", text: "بر" },
+                    { letter: "م", text: "منتزه" },
+                    { letter: "س", text: "سوق" },
+                    { letter: "ا", text: "استراحة" },
+                    { letter: "ب", text: "بحري" }
+                ]
+            },
+            {
+                q: "شي يزعجك وأنت تسوق في شوارع المدينة؟",
+                answers: [
+                    { letter: "ز", text: "زحمة" },
+                    { letter: "ح", text: "حفريات" },
+                    { letter: "س", text: "ساهر" },
+                    { letter: "ت", text: "تجاوز خاطئ" },
+                    { letter: "إ", text: "إشارات طويلة" }
+                ]
+            },
+            {
+                q: "هدية أول ما يرجع المسافر من السفر؟",
+                answers: [
+                    { letter: "ش", text: "شوكلاته" },
+                    { letter: "ع", text: "عطور" },
+                    { letter: "ت", text: "تمر" },
+                    { letter: "م", text: "مكسرات" },
+                    { letter: "ذ", text: "ذهب" }
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let team1Name = "فريق الصقور";
+        let team2Name = "فريق النسور";
+        let team1Score = 0;
+        let team2Score = 0;
+        let activeTeam = 1;
+        let team1Strikes = 0;
+        let team2Strikes = 0;
+        let optionsCount = 5;
+
+        function startGame() {
+            team1Name = document.getElementById('team1Input').value || "فريق الصقور";
+            team2Name = document.getElementById('team2Input').value || "فريق النسور";
+            optionsCount = parseInt(document.getElementById('optionsCountInput').value) || 5;
+
+            document.getElementById('team1Display').innerText = team1Name;
+            document.getElementById('team2Display').innerText = team2Name;
+
+            document.getElementById('setupScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            team1Strikes = 0;
+            team2Strikes = 0;
+            updateStrikesDisplay();
+
+            const qData = questionsDB[currentQuestionIndex % questionsDB.length];
+            document.getElementById('questionText').innerText = qData.q;
+
+            const grid = document.getElementById('answersGrid');
+            grid.innerHTML = '';
+
+            const currentAnswers = qData.answers.slice(0, optionsCount);
+            currentAnswers.forEach((ans, index) => {
+                const card = document.createElement('div');
+                card.className = 'answer-card';
+                card.onclick = () => revealAnswer(card);
+                card.innerHTML = `
+                    <div class="answer-num-letter">${index + 1} (${ans.letter}) =</div>
+                    <div class="answer-text">${ans.text}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function revealAnswer(card) {
+            if (!card.classList.contains('revealed')) {
+                card.classList.add('revealed');
+                if (activeTeam === 1) {
+                    team1Score += 100;
+                    document.getElementById('team1Score').innerText = team1Score;
+                } else {
+                    team2Score += 100;
+                    document.getElementById('team2Score').innerText = team2Score;
+                }
+            }
+        }
+
+        function registerWrong() {
+            if (activeTeam === 1) {
+                team1Strikes++;
+                updateStrikesDisplay();
+                if (team1Strikes >= 3) {
+                    alert(`⚠️ استنفد ${team1Name} الأخطاء الـ 3! ينتقل الدور واللعب إلى ${team2Name}`);
+                    activeTeam = 2;
+                    team1Strikes = 0;
+                    updateStrikesDisplay();
+                    updateActiveTeamUI();
+                }
+            } else {
+                team2Strikes++;
+                updateStrikesDisplay();
+                if (team2Strikes >= 3) {
+                    alert(`⚠️ استنفد ${team2Name} الأخطاء الـ 3! ينتقل الدور واللعب إلى ${team1Name}`);
+                    activeTeam = 1;
+                    team2Strikes = 0;
+                    updateStrikesDisplay();
+                    updateActiveTeamUI();
+                }
+            }
+        }
+
+        function updateStrikesDisplay() {
+            document.getElementById('team1Strikes').innerText = '❌'.repeat(team1Strikes);
+            document.getElementById('team2Strikes').innerText = '❌'.repeat(team2Strikes);
+        }
+
+        function updateActiveTeamUI() {
+            if (activeTeam === 1) {
+                document.getElementById('team1Box').classList.add('active');
+                document.getElementById('team2Box').classList.remove('active');
+            } else {
+                document.getElementById('team2Box').classList.add('active');
+                document.getElementById('team1Box').classList.remove('active');
+            }
+        }
+
+        function revealAll() {
+            const cards = document.querySelectorAll('.answer-card');
+            cards.forEach(card => card.classList.add('revealed'));
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex >= questionsDB.length) {
+                alert("🎉 انتهت جميع الأسئلة الـ 10! شكراً للعبكم.");
+                currentQuestionIndex = 0;
+            }
+            activeTeam = activeTeam === 1 ? 2 : 1;
+            updateActiveTeamUI();
+            loadQuestion();
+        }
+    </script>
+</body>
+</html>
