@@ -83,6 +83,27 @@
             font-size: 12px;
         }
 
+        .admin-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-btn {
+            background: #d4af37;
+            color: #03180f;
+            border: none;
+            padding: 8px 15px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .admin-btn:hover {
+            background: #e6c555;
+        }
+
         .national-quotes {
             display: flex;
             gap: 20px;
@@ -214,6 +235,26 @@
             color: #ffffff;
         }
 
+        .admin-controls-panel {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .admin-ctrl-btn {
+            background: #d4af37;
+            color: #03180f;
+            border: none;
+            padding: 5px 10px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .admin-ctrl-btn:hover { background: #e6c555; }
+
         .strikes {
             color: #ff5252;
             font-size: 20px;
@@ -343,6 +384,9 @@
                 <h2>حفظهم الله</h2>
                 <p>عز وفخر</p>
             </div>
+            <div class="admin-section">
+                <button class="admin-btn" onclick="verifyAdmin()">ادخل كأدمن</button>
+            </div>
         </div>
         <div class="national-quotes">
             <span>🇸🇦 السعودية ديرتي مامثلك بها الكون ديره</span>
@@ -378,11 +422,21 @@
                 <div id="team1Box" class="team-box active">
                     <div id="team1Display" class="team-name">فريق الصقور</div>
                     <div id="team1Score" class="team-score">0</div>
+                    <div id="team1AdminControls" class="admin-controls-panel hidden">
+                        <button class="admin-ctrl-btn" onclick="modifyScore(1, 100)">+100</button>
+                        <button class="admin-ctrl-btn" onclick="modifyScore(1, -100)">-100</button>
+                        <button class="admin-ctrl-btn" onclick="resetScore(1)">تصفير</button>
+                    </div>
                     <div id="team1Strikes" class="strikes"></div>
                 </div>
                 <div id="team2Box" class="team-box">
                     <div id="team2Display" class="team-name">فريق النسور</div>
                     <div id="team2Score" class="team-score">0</div>
+                    <div id="team2AdminControls" class="admin-controls-panel hidden">
+                        <button class="admin-ctrl-btn" onclick="modifyScore(2, 100)">+100</button>
+                        <button class="admin-ctrl-btn" onclick="modifyScore(2, -100)">-100</button>
+                        <button class="admin-ctrl-btn" onclick="resetScore(2)">تصفير</button>
+                    </div>
                     <div id="team2Strikes" class="strikes"></div>
                 </div>
             </div>
@@ -516,6 +570,7 @@
         let team1Strikes = 0;
         let team2Strikes = 0;
         let optionsCount = 5;
+        let isAdmin = false;
 
         function startGame() {
             team1Name = document.getElementById('team1Input').value || "فريق الصقور";
@@ -529,6 +584,40 @@
             document.getElementById('gameScreen').classList.remove('hidden');
 
             loadQuestion();
+        }
+
+        function verifyAdmin() {
+            const pass = prompt("الرجاء إدخال كلمة مرور الأدمن:");
+            if (pass === "A9281&$@01734*@#$0138e9") {
+                isAdmin = true;
+                document.getElementById('team1AdminControls').classList.remove('hidden');
+                document.getElementById('team2AdminControls').classList.remove('hidden');
+                alert("تم تسجيل الدخول كأدمن بنجاح! يمكنك الآن تعديل وتصفير النقاط.");
+            } else if (pass !== null) {
+                alert("كلمة المرور غير صحيحة!");
+            }
+        }
+
+        function modifyScore(teamNum, amount) {
+            if (!isAdmin) return;
+            if (teamNum === 1) {
+                team1Score = Math.max(0, team1Score + amount);
+                document.getElementById('team1Score').innerText = team1Score;
+            } else {
+                team2Score = Math.max(0, team2Score + amount);
+                document.getElementById('team2Score').innerText = team2Score;
+            }
+        }
+
+        function resetScore(teamNum) {
+            if (!isAdmin) return;
+            if (teamNum === 1) {
+                team1Score = 0;
+                document.getElementById('team1Score').innerText = team1Score;
+            } else {
+                team2Score = 0;
+                document.getElementById('team2Score').innerText = team2Score;
+            }
         }
 
         function loadQuestion() {
