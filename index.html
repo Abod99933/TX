@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>السعودي يقول 🇸🇦</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- مكتبة لتوليد الباركود تلقائياً -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -339,6 +341,7 @@
             width: 100%;
             justify-content: center;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .ctrl-btn {
@@ -351,29 +354,36 @@
             transition: 0.2s;
         }
 
-        .btn-wrong {
-            background-color: #c62828;
-            color: white;
-        }
+        .btn-wrong { background-color: #c62828; color: white; }
         .btn-wrong:hover { background-color: #b71c1c; }
 
-        .btn-reveal-all {
-            background-color: #2e7d32;
-            color: white;
-        }
+        .btn-reveal-all { background-color: #2e7d32; color: white; }
         .btn-reveal-all:hover { background-color: #1b5e20; }
 
-        .btn-next {
-            background-color: #d4af37;
-            color: #03180f;
-        }
+        .btn-next { background-color: #d4af37; color: #03180f; }
         .btn-next:hover { background-color: #c19b2e; }
 
-        .btn-secondary {
-            background-color: #1565c0;
-            color: white;
-        }
+        .btn-secondary { background-color: #1565c0; color: white; }
         .btn-secondary:hover { background-color: #0d47a1; }
+
+        /* نافذة الباركود */
+        .qrcode-container {
+            background: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            margin-top: 15px;
+            width: 100%;
+        }
+        .qrcode-container p {
+            color: #03180f;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 <body>
@@ -463,15 +473,73 @@
 
             <div class="game-controls">
                 <button class="ctrl-btn btn-wrong" onclick="registerWrong()">❌ تسجيل خطأ (ستريك)</button>
-                <button class="ctrl-btn btn-reveal-all" onclick="revealAll()">👁️ كشف الكل وعرض الإجابات</button>
+                <button class="ctrl-btn btn-reveal-all" onclick="revealAll()">👁️ كشف الكل</button>
                 <button class="ctrl-btn btn-next" onclick="nextQuestion()">السؤال التالي ➡️</button>
-                <button class="ctrl-btn btn-secondary" onclick="openPresenterWindow()">📱 شاشة المذيع لجهاز آخر</button>
+                <button class="ctrl-btn btn-secondary" onclick="openPresenterWindow()">📱 شاشة المذيع المنفصلة</button>
+            </div>
+
+            <!-- باركود للمسح من جهاز آخر -->
+            <div class="qrcode-container">
+                <p>📷 امسح الباركود من جوالك أو تابلت آخر لفتح شاشة المذيع والإجابات:</p>
+                <div id="qrcode"></div>
             </div>
         </div>
     </div>
 
     <script>
         const questionsDB = [
+            // أسئلة الأب والام الجديدة
+            {
+                q: "الابو لما يتقعد وش اول شي يسويه؟",
+                answers: [
+                    { letter: "ي", text: "يطفي المكيفات" },
+                    { letter: "ي", text: "يزعجك" },
+                    { letter: "ي", text: "يطفي اللمبات" },
+                    { letter: "ي", text: "يرمم البيت" },
+                    { letter: "ي", text: "يخترع اشياء" }
+                ]
+            },
+            {
+                q: "الام بتروح عند جارتها وش تاخذ معها؟",
+                answers: [
+                    { letter: "و", text: "ورد" },
+                    { letter: "و", text: "ورق عنب" },
+                    { letter: "م", text: "معجنات" },
+                    { letter: "س", text: "سلة قهوة وشاهي" }
+                ]
+            },
+            // الأسئلة الـ 3 المبتكرة الإضافية
+            {
+                q: "شي يضيع في البيت ولا يمكن تلقاه إلا صدفة؟",
+                answers: [
+                    { letter: "ر", text: "ريموت التلفزيون" },
+                    { letter: "ش", text: "شاحن الجوال" },
+                    { letter: "م", text: "مفتاح السيارة" },
+                    { letter: "ن", text: "نظارة" },
+                    { letter: "ق", text: "قلم" }
+                ]
+            },
+            {
+                q: "كلمة إذا قالها أبوك تحس إنك سويت جريمة؟",
+                answers: [
+                    { letter: "ت", text: "تعال هنا" },
+                    { letter: "أ", text: "اقعد خلنا نتفاهم" },
+                    { letter: "و", text: "والله لوريك" },
+                    { letter: "م", text: "ما تربيت" },
+                    { letter: "ع", text: "على خشمي" }
+                ]
+            },
+            {
+                q: "شي يطلبه منك اخوك الصغير اول ما تفتح باب البقالة؟",
+                answers: [
+                    { letter: "ح", text: "حلاوة" },
+                    { letter: "ش", text: "بسكت وكاكاو" },
+                    { letter: "ع", text: "عصير" },
+                    { letter: "ل", text: "لعبة" },
+                    { letter: "ب", text: "بطاطس" }
+                ]
+            },
+            // الأسئلة السابقة
             {
                 q: "دخلت المجلس وش ممكن لقيت؟",
                 answers: [
@@ -521,56 +589,6 @@
                     { letter: "م", text: "مناديل" },
                     { letter: "ر", text: "رقم الحساب" }
                 ]
-            },
-            {
-                q: "شي تطلبه من البقالة وغالباً ينسونه أهلك؟",
-                answers: [
-                    { letter: "خ", text: "خبز" },
-                    { letter: "ز", text: "زبادي" },
-                    { letter: "ح", text: "حليب" },
-                    { letter: "ب", text: "بيض" },
-                    { letter: "ش", text: "شامبو" }
-                ]
-            },
-            {
-                q: "مشروب سعودي ساخن أساسي في الشتاء؟",
-                answers: [
-                    { letter: "ز", text: "زنجبيل" },
-                    { letter: "ق", text: "قشر" },
-                    { letter: "ح", text: "حليب مغلي" },
-                    { letter: "س", text: "سحلب" },
-                    { letter: "ش", text: "شاي عدني" }
-                ]
-            },
-            {
-                q: "مكان تروح له العائلة السعودية في الويكند؟",
-                answers: [
-                    { letter: "ب", text: "بر" },
-                    { letter: "م", text: "منتزه" },
-                    { letter: "س", text: "سوق" },
-                    { letter: "ا", text: "استراحة" },
-                    { letter: "ب", text: "بحري" }
-                ]
-            },
-            {
-                q: "شي يزعجك وأنت تسوق في شوارع المدينة؟",
-                answers: [
-                    { letter: "ز", text: "زحمة" },
-                    { letter: "ح", text: "حفريات" },
-                    { letter: "س", text: "ساهر" },
-                    { letter: "ت", text: "تجاوز خاطئ" },
-                    { letter: "إ", text: "إشارات طويلة" }
-                ]
-            },
-            {
-                q: "هدية أول ما يرجع المسافر من السفر؟",
-                answers: [
-                    { letter: "ش", text: "شوكلاته" },
-                    { letter: "ع", text: "عطور" },
-                    { letter: "ت", text: "تمر" },
-                    { letter: "م", text: "مكسرات" },
-                    { letter: "ذ", text: "ذهب" }
-                ]
             }
         ];
 
@@ -585,7 +603,6 @@
         let optionsCount = 5;
         let isAdmin = false;
 
-        // إعداد القناة للتواصل بين النوافذ أو الأجهزة على نفس المتصفح
         const channel = new BroadcastChannel('saudi_says_channel');
 
         function startGame() {
@@ -599,6 +616,18 @@
             document.getElementById('setupScreen').classList.add('hidden');
             document.getElementById('gameScreen').classList.remove('hidden');
 
+            // توليد رابط الباركود لشاشة المذيع تلقائياً
+            const presenterUrl = window.location.href.split('?')[0] + "?presenter=true";
+            document.getElementById("qrcode").innerHTML = "";
+            new QRCode(document.getElementById("qrcode"), {
+                text: presenterUrl,
+                width: 128,
+                height: 128,
+                colorDark : "#03180f",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
             loadQuestion();
         }
 
@@ -608,7 +637,7 @@
                 isAdmin = true;
                 document.getElementById('team1AdminControls').classList.remove('hidden');
                 document.getElementById('team2AdminControls').classList.remove('hidden');
-                alert("تم تسجيل الدخول كأدمن بنجاح! يمكنك الآن تعديل وتصفير النقاط.");
+                alert("تم تسجيل الدخول كأدمن بنجاح!");
             } else if (pass !== null) {
                 alert("كلمة المرور غير صحيحة!");
             }
@@ -684,7 +713,7 @@
                 team1Strikes++;
                 updateStrikesDisplay();
                 if (team1Strikes >= 3) {
-                    alert(`⚠️ استنفد ${team1Name} الأخطاء الـ 3! ينتقل الدور واللعب إلى ${team2Name}`);
+                    alert(`⚠️ استنفد ${team1Name} الأخطاء الـ 3! ينتقل الدور إلى ${team2Name}`);
                     activeTeam = 2;
                     team1Strikes = 0;
                     updateStrikesDisplay();
@@ -694,7 +723,7 @@
                 team2Strikes++;
                 updateStrikesDisplay();
                 if (team2Strikes >= 3) {
-                    alert(`⚠️ استنفد ${team2Name} الأخطاء الـ 3! ينتقل الدور واللعب إلى ${team1Name}`);
+                    alert(`⚠️ استنفد ${team2Name} الأخطاء الـ 3! ينتقل الدور إلى ${team1Name}`);
                     activeTeam = 1;
                     team2Strikes = 0;
                     updateStrikesDisplay();
@@ -728,7 +757,7 @@
         function nextQuestion() {
             currentQuestionIndex++;
             if (currentQuestionIndex >= questionsDB.length) {
-                alert("🎉 انتهت جميع الأسئلة الـ 10! شكراً للعبكم.");
+                alert("🎉 انتهت جميع الأسئلة!");
                 currentQuestionIndex = 0;
             }
             activeTeam = activeTeam === 1 ? 2 : 1;
@@ -736,7 +765,6 @@
             loadQuestion();
         }
 
-        // إرسال حالة اللعبة الحالية لجميع النوافذ المفتوحة
         function broadcastState() {
             const qData = questionsDB[currentQuestionIndex % questionsDB.length];
             const currentAnswers = qData.answers.slice(0, optionsCount).map((ans, idx) => {
@@ -762,24 +790,23 @@
             });
         }
 
-        // دالة لفتح نافذة المذيع (تفتح في نافذة جديدة أو جهاز متصل بنفس الرابط مع إضافة باراميتر)
         function openPresenterWindow() {
-            const presenterWindow = window.open(window.location.href + "?presenter=true", "_blank", "width=800,height=700");
+            window.open(window.location.href.split('?')[0] + "?presenter=true", "_blank", "width=800,height=700");
         }
 
-        // التحقق مما إذا كانت هذه النافذة هي "شاشة المذيع" عند فتح الرابط
+        // واجهة شاشة المذيع عند فتحها عبر الرابط أو الباركود
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('presenter')) {
                 document.body.innerHTML = `
                     <div style="padding: 20px; text-align: center; color: #fff; direction: rtl;">
-                        <h1 style="color: #d4af37; margin-bottom: 20px;">📱 شاشة المذيع والتحكم</h1>
-                        <div id="pQuestion" style="background: #0c4a2e; border: 2px solid #d4af37; padding: 15px; border-radius: 10px; font-size: 22px; margin-bottom: 20px;">جارِ تحميل السؤال...</div>
+                        <h1 style="color: #d4af37; margin-bottom: 15px;">📱 شاشة المذيع (جهاز آخر)</h1>
+                        <div id="pQuestion" style="background: #0c4a2e; border: 2px solid #d4af37; padding: 15px; border-radius: 10px; font-size: 22px; margin-bottom: 20px;">انتظار اتصال الشاشة الرئيسة...</div>
                         <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 20px;">
                             <div id="pTeam1" style="background: #062e1d; padding: 10px; border-radius: 10px; border: 1px solid #2e7d32; flex: 1;"></div>
                             <div id="pTeam2" style="background: #062e1d; padding: 10px; border-radius: 10px; border: 1px solid #2e7d32; flex: 1;"></div>
                         </div>
-                        <h3 style="color: #d4af37; margin-bottom: 10px;">الإجابات (مرئية للمذيع فقط):</h3>
+                        <h3 style="color: #d4af37; margin-bottom: 10px;">الإجابات (مرئية لك وحدك):</h3>
                         <div id="pAnswers" style="display: flex; flex-direction: column; gap: 10px; max-width: 600px; margin: 0 auto;"></div>
                     </div>
                 `;
@@ -788,17 +815,17 @@
                     if (event.data.type === 'UPDATE_STATE') {
                         const data = event.data;
                         document.getElementById('pQuestion').innerText = "السؤال: " + data.question;
-                        document.getElementById('pTeam1').innerHTML = `<b>${data.team1Name}</b><br>النقاط: ${data.team1Score}<br>الأخطاء: ${'❌'.repeat(data.team1Strikes)} ${data.activeTeam === 1 ? '⭐ (الدور الحالي)' : ''}`;
-                        document.getElementById('pTeam2').innerHTML = `<b>${data.team2Name}</b><br>النقاط: ${data.team2Score}<br>الأخطاء: ${'❌'.repeat(data.team2Strikes)} ${data.activeTeam === 2 ? '⭐ (الدور الحالي)' : ''}`;
+                        document.getElementById('pTeam1').innerHTML = `<b>${data.team1Name}</b><br>النقاط: ${data.team1Score}<br>الأخطاء: ${'❌'.repeat(data.team1Strikes)} ${data.activeTeam === 1 ? '⭐ (دوره)' : ''}`;
+                        document.getElementById('pTeam2').innerHTML = `<b>${data.team2Name}</b><br>النقاط: ${data.team2Score}<br>الأخطاء: ${'❌'.repeat(data.team2Strikes)} ${data.activeTeam === 2 ? '⭐ (دوره)' : ''}`;
                         
                         const pAnswers = document.getElementById('pAnswers');
                         pAnswers.innerHTML = '';
                         data.answers.forEach((ans, idx) => {
                             pAnswers.innerHTML += `
-                                <div style="background: ${ans.revealed ? '#0d5c36' : '#1b5e20'}; border: 1px solid #d4af37; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between;">
-                                    <span>${idx + 1} (${ans.letter})</span>
-                                    <span style="font-weight: bold; color: #fff;">${ans.text}</span>
-                                    <span style="color: ${ans.revealed ? '#a5d6a7' : '#ffcc80'};">${ans.revealed ? 'مكشوفة للعضو' : 'مخفية'}</span>
+                                <div style="background: ${ans.revealed ? '#0d5c36' : '#1b5e20'}; border: 1px solid #d4af37; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size:18px;">${idx + 1} (${ans.letter})</span>
+                                    <span style="font-weight: bold; color: #fff; font-size: 20px;">${ans.text}</span>
+                                    <span style="color: ${ans.revealed ? '#a5d6a7' : '#ffcc80'}; font-weight: bold;">${ans.revealed ? 'مكشوفة' : 'مخفية'}</span>
                                 </div>
                             `;
                         });
