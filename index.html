@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>السعودي يقول</title>
+    <title>السعودي يقول 🇸🇦</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         * {
@@ -369,6 +369,11 @@
         }
         .btn-next:hover { background-color: #c19b2e; }
 
+        .btn-secondary {
+            background-color: #1565c0;
+            color: white;
+        }
+        .btn-secondary:hover { background-color: #0d47a1; }
     </style>
 </head>
 <body>
@@ -409,11 +414,11 @@
                 <h1>السعودي يقول 🇸🇦</h1>
                 <div class="form-group">
                     <label>اسم الفريق الأول:</label>
-                    <input type="text" id="team1Input" class="form-control" value="">
+                    <input type="text" id="team1Input" class="form-control" value="فريق الصقور">
                 </div>
                 <div class="form-group">
                     <label>اسم الفريق الثاني:</label>
-                    <input type="text" id="team2Input" class="form-control" value="">
+                    <input type="text" id="team2Input" class="form-control" value="فريق النسور">
                 </div>
                 <div class="form-group">
                     <label>عدد الخيارات لكل سؤال (من 3 إلى 5):</label>
@@ -460,6 +465,7 @@
                 <button class="ctrl-btn btn-wrong" onclick="registerWrong()">❌ تسجيل خطأ (ستريك)</button>
                 <button class="ctrl-btn btn-reveal-all" onclick="revealAll()">👁️ كشف الكل وعرض الإجابات</button>
                 <button class="ctrl-btn btn-next" onclick="nextQuestion()">السؤال التالي ➡️</button>
+                <button class="ctrl-btn btn-secondary" onclick="openPresenterWindow()">📱 شاشة المذيع لجهاز آخر</button>
             </div>
         </div>
     </div>
@@ -558,7 +564,6 @@
             },
             {
                 q: "هدية أول ما يرجع المسافر من السفر؟",
-                assets: [],
                 answers: [
                     { letter: "ش", text: "شوكلاته" },
                     { letter: "ع", text: "عطور" },
@@ -579,6 +584,9 @@
         let team2Strikes = 0;
         let optionsCount = 5;
         let isAdmin = false;
+
+        // إعداد القناة للتواصل بين النوافذ أو الأجهزة على نفس المتصفح
+        const channel = new BroadcastChannel('saudi_says_channel');
 
         function startGame() {
             team1Name = document.getElementById('team1Input').value || "فريق الصقور";
@@ -615,6 +623,7 @@
                 team2Score = Math.max(0, team2Score + amount);
                 document.getElementById('team2Score').innerText = team2Score;
             }
+            broadcastState();
         }
 
         function resetScore(teamNum) {
@@ -626,6 +635,7 @@
                 team2Score = 0;
                 document.getElementById('team2Score').innerText = team2Score;
             }
+            broadcastState();
         }
 
         function loadQuestion() {
@@ -643,17 +653,20 @@
             currentAnswers.forEach((ans, index) => {
                 const card = document.createElement('div');
                 card.className = 'answer-card';
-                card.onclick = () => revealAnswer(card);
+                card.onclick = () => revealAnswer(index);
                 card.innerHTML = `
                     <div class="answer-num-letter">${index + 1} (${ans.letter}) =</div>
-                    <div class="answer-text">${ans.text}</div>
+                    <div class="answer-text" id="ans-text-${index}">${ans.text}</div>
                 `;
                 grid.appendChild(card);
             });
+            broadcastState();
         }
 
-        function revealAnswer(card) {
-            if (!card.classList.contains('revealed')) {
+        function revealAnswer(index) {
+            const cards = document.querySelectorAll('.answer-card');
+            const card = cards[index];
+            if (card && !card.classList.contains('revealed')) {
                 card.classList.add('revealed');
                 if (activeTeam === 1) {
                     team1Score += 100;
@@ -662,6 +675,7 @@
                     team2Score += 100;
                     document.getElementById('team2Score').innerText = team2Score;
                 }
+                broadcastState();
             }
         }
 
@@ -687,6 +701,7 @@
                     updateActiveTeamUI();
                 }
             }
+            broadcastState();
         }
 
         function updateStrikesDisplay() {
@@ -707,6 +722,7 @@
         function revealAll() {
             const cards = document.querySelectorAll('.answer-card');
             cards.forEach(card => card.classList.add('revealed'));
+            broadcastState();
         }
 
         function nextQuestion() {
@@ -719,6 +735,77 @@
             updateActiveTeamUI();
             loadQuestion();
         }
+
+        // إرسال حالة اللعبة الحالية لجميع النوافذ المفتوحة
+        function broadcastState() {
+            const qData = questionsDB[currentQuestionIndex % questionsDB.length];
+            const currentAnswers = qData.answers.slice(0, optionsCount).map((ans, idx) => {
+                const card = document.querySelectorAll('.answer-card')[idx];
+                return {
+                    text: ans.text,
+                    letter: ans.letter,
+                    revealed: card ? card.classList.contains('revealed') : false
+                };
+            });
+
+            channel.postMessage({
+                type: 'UPDATE_STATE',
+                question: qData.q,
+                answers: currentAnswers,
+                team1Name,
+                team2Name,
+                team1Score,
+                team2Score,
+                team1Strikes,
+                team2Strikes,
+                activeTeam
+            });
+        }
+
+        // دالة لفتح نافذة المذيع (تفتح في نافذة جديدة أو جهاز متصل بنفس الرابط مع إضافة باراميتر)
+        function openPresenterWindow() {
+            const presenterWindow = window.open(window.location.href + "?presenter=true", "_blank", "width=800,height=700");
+        }
+
+        // التحقق مما إذا كانت هذه النافذة هي "شاشة المذيع" عند فتح الرابط
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('presenter')) {
+                document.body.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: #fff; direction: rtl;">
+                        <h1 style="color: #d4af37; margin-bottom: 20px;">📱 شاشة المذيع والتحكم</h1>
+                        <div id="pQuestion" style="background: #0c4a2e; border: 2px solid #d4af37; padding: 15px; border-radius: 10px; font-size: 22px; margin-bottom: 20px;">جارِ تحميل السؤال...</div>
+                        <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 20px;">
+                            <div id="pTeam1" style="background: #062e1d; padding: 10px; border-radius: 10px; border: 1px solid #2e7d32; flex: 1;"></div>
+                            <div id="pTeam2" style="background: #062e1d; padding: 10px; border-radius: 10px; border: 1px solid #2e7d32; flex: 1;"></div>
+                        </div>
+                        <h3 style="color: #d4af37; margin-bottom: 10px;">الإجابات (مرئية للمذيع فقط):</h3>
+                        <div id="pAnswers" style="display: flex; flex-direction: column; gap: 10px; max-width: 600px; margin: 0 auto;"></div>
+                    </div>
+                `;
+
+                channel.onmessage = (event) => {
+                    if (event.data.type === 'UPDATE_STATE') {
+                        const data = event.data;
+                        document.getElementById('pQuestion').innerText = "السؤال: " + data.question;
+                        document.getElementById('pTeam1').innerHTML = `<b>${data.team1Name}</b><br>النقاط: ${data.team1Score}<br>الأخطاء: ${'❌'.repeat(data.team1Strikes)} ${data.activeTeam === 1 ? '⭐ (الدور الحالي)' : ''}`;
+                        document.getElementById('pTeam2').innerHTML = `<b>${data.team2Name}</b><br>النقاط: ${data.team2Score}<br>الأخطاء: ${'❌'.repeat(data.team2Strikes)} ${data.activeTeam === 2 ? '⭐ (الدور الحالي)' : ''}`;
+                        
+                        const pAnswers = document.getElementById('pAnswers');
+                        pAnswers.innerHTML = '';
+                        data.answers.forEach((ans, idx) => {
+                            pAnswers.innerHTML += `
+                                <div style="background: ${ans.revealed ? '#0d5c36' : '#1b5e20'}; border: 1px solid #d4af37; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between;">
+                                    <span>${idx + 1} (${ans.letter})</span>
+                                    <span style="font-weight: bold; color: #fff;">${ans.text}</span>
+                                    <span style="color: ${ans.revealed ? '#a5d6a7' : '#ffcc80'};">${ans.revealed ? 'مكشوفة للعضو' : 'مخفية'}</span>
+                                </div>
+                            `;
+                        });
+                    }
+                };
+            }
+        });
     </script>
 </body>
 </html>
